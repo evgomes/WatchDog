@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WatchDogCompleteApiNet6.Models;
+using Microsoft.Extensions.Logging;
+using WatchDogCompleteTestAPI.Models;
 
-namespace WatchDogCompleteApiNet6.Controllers
+namespace WatchDogCompleteTestAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -50,7 +50,13 @@ namespace WatchDogCompleteTestAPI
 
             app.UseAuthorization();
 
-            app.UseWatchDog(opt => { opt.WatchPageUsername = "admin"; opt.WatchPagePassword = "Qwerty@123"; opt.Blacklist = "Test/testPost, weatherforecast"; });
+            app.UseWatchDog(opt => 
+            { 
+                opt.WatchPageUsername = "admin"; 
+                opt.WatchPagePassword = "Qwerty@123"; 
+                opt.Blacklist = "Test/testPost, weatherforecast";
+                opt.HideSensitiveRequestBodyData = true;
+            });
 
             app.UseEndpoints(endpoints =>
             {

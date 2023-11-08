@@ -1,6 +1,6 @@
 ﻿using WatchDog.src.Attributes;
 
-namespace WatchDogCompleteApiNet6.Models
+namespace WatchDogCompleteTestAPI.Models
 {
     public class Login
     {

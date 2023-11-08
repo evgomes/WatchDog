@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IO;
-using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
-using WatchDog.src.Attributes;
 using WatchDog.src.Enums;
 using WatchDog.src.Helpers;
 using WatchDog.src.Interfaces;
@@ -107,39 +101,13 @@ namespace WatchDog.src
                 context.Request.Body.Position = 0;
             }
 
-            ReplaceSensitiveContent(context, requestBodyDto);
+            if (_options.HideSensitiveRequestBodyData)
+            {
+                requestBodyDto.RequestBody = SensitiveDataHelper.ReplaceRequestBodySensitiveContent(context, requestBodyDto.RequestBody);
+            }
 
             RequestLog = requestBodyDto;
             return requestBodyDto;
-        }
-
-        private static void ReplaceSensitiveContent(HttpContext context, RequestModel requestBodyDto)
-        {
-            var endpoint = context.GetEndpoint();
-            var actionDescriptor = endpoint.Metadata.GetMetadata<ActionDescriptor>() as ControllerActionDescriptor;
-            var body = actionDescriptor.Parameters.FirstOrDefault(x => x.BindingInfo.BindingSource.Id.Equals("Body", StringComparison.OrdinalIgnoreCase));
-
-            if (body != null)
-            {
-                var bodyModelProperties = body.ParameterType.GetProperties();
-                var sensitiveProperties = bodyModelProperties.Where(property => property.GetCustomAttribute<LogSensitiveDataAttribute>() != null).Select(property => property.Name.ToLowerInvariant());
-
-                if (sensitiveProperties.Any())
-                {
-                    var modifiedBody = JObject.Parse(requestBodyDto.RequestBody);
-
-                    foreach (var property in sensitiveProperties)
-                    {
-                        var token = modifiedBody[property];
-                        if (token != null && token.Type == JTokenType.String)
-                        {
-                            modifiedBody[property] = "******";
-                        }
-                    }
-
-                    requestBodyDto.RequestBody = modifiedBody.ToString(Newtonsoft.Json.Formatting.None);
-                }
-            }
         }
 
         private async Task<ResponseModel> LogResponse(HttpContext context)

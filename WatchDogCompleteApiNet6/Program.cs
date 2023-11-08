@@ -46,6 +46,7 @@ app.UseWatchDog(conf =>
     conf.WatchPageUsername = "admin";
     conf.WatchPagePassword = "Qwerty@123";
     conf.Blacklist = "/auth";
+    conf.HideSensitiveRequestBodyData = true;
 });
 
 app.Run();
